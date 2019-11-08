@@ -1,20 +1,18 @@
 package com.rtjvm.scala.oop.filesystem
 
-import java.util.Scanner
-
 import com.rtjvm.scala.oop.commands.Command
 import com.rtjvm.scala.oop.files.Directory
 
 object Filesystem extends App {
 
   val root = Directory.ROOT
-  var state = State(root, root) // this is var (not val) because it's stateful
-  val scanner = new Scanner(System.in)
 
-  while(true) {
-    state.show
-    val input = scanner.nextLine()
-    state = Command.from(input).apply(state)
-  }
+  State(root, root).show
+
+  io.Source.stdin.getLines().foldLeft(State(root, root))((currentState, newLine) => {
+    val newState = Command.from(newLine).apply(currentState)
+    newState.show
+    newState
+  })
 
 }
